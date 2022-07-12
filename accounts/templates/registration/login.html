@@ -1,0 +1,17 @@
+{% extends 'accounts/base.html' %}
+<head>
+<title>{% block titlte %}Login{% endblock %}</title>
+</head>
+
+{% block content %}
+	<div class="content-section">
+		<form method="POST" class="form-group">
+			{% csrf_token %}
+			<legend class="border-bottom mb-3">Login</legend>
+			{{form}}
+			{{ form.path }}
+			<button name="create", type="submit", class="btn btn-success">Login</button>
+		    <p> Don't have an account? Create one<a href = "/accounts/register" > here</a></p>
+        </form>
+	</div>
+{% endblock %}

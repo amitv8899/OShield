@@ -1,0 +1,12 @@
+{% extends 'accounts/base.html' %}
+<head>
+    <title>{% block titlte %}UserHome{% endblock %}</title>
+    </head>
+    {% block content %}
+	<div class="content-section">
+	  <h>hello {{Cusername}}</h>
+	  {% csrf_token %}
+	  <legend class="border-bottom mb-3">if you want to upload your charge</legend>	
+	  <button name="upload", type="button", class="btn btn-success"onclick="location.href='/home'">upload charge</button>
+	</div>	
+{% endblock %}
