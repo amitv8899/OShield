@@ -24,5 +24,4 @@ urlpatterns = [
     path("accounts/",include("accounts.urls")),
     path("home/",views.home,name="home"),
     path("Data/",backend.GetData),
-    
 ]
