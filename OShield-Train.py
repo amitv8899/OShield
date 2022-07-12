@@ -27,6 +27,8 @@ import pickle
 import requests
 import urllib.request
 import base64
+import sqlite3
+
 
 
 
@@ -37,28 +39,31 @@ LocalDataPath = "C:\\Users\\AMIT\\Desktop\\studying\\workshop\\dataset\\my data\
 fileKNearest_model = 'KNearest_model.sav'
 fileDecisionTreeClassifier_model = 'DecisionTreeClassifier.sav'
 fileLogisticRegression_model = 'LogisticRegression.sav'
+db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\sql.db'
 
 
 #### help fun
 def GetLocalData():
    return pd.read_excel(LocalDataPath)
 
-def GetServerData(): # need to change
-   DataUrl = serverUrl + "Data/"
-   password = "model123456789"
-   request = requests.get(DataUrl,params={"password": password})
-   data = request.content
-   #data = pickle.loads(base64.b64decode(data.encode()))
-   print(data)
-   
-   return data
 
-def CheckConnectionAndGetData():
-   if(requests.get(serverUrl).status_code == 200):
-      return GetServerData()
-        
-   else:
-      return GetLocalData()
+def GetData():
+   conn = create_connection(db_file)
+   cur = conn.cursor()
+   
+   sql_query = pd.read_sql_query ('''SELECT * FROM frauddetection_data_charge''', conn)
+   df = pd.DataFrame(sql_query, columns = ['id_Username', 'age', 'cityLiveIn','Gender','amount','hour_of_debit','time_of_debit','city_of_debit','credit_card_showed','is_fraud'])
+   return df
+   
+def create_connection(db_file):
+   conn = None
+   try:
+      conn = sqlite3.connect(db_file)
+   except sqlite3.Error as e:
+      print(e)
+
+   return conn
+   
 
 def number_to_time(number):
    number = number*24
@@ -139,35 +144,21 @@ def Train(Tdata):## params = panada.df goal = to train model as in the colab
     KNeighborsClassifier_model = KNeighborsClassifier_H()
     DecisionTreeClassifier_model = DecisionTreeClassifier_H()
 
-    ##classifiers = {
-    ##"LogisiticRegression": LogisticRegression_model,
-    ##"KNearest": KNeighborsClassifier_model,
-    ##"DecisionTreeClassifier": DecisionTreeClassifier_model
-     ##}
-
-    ##for key, classifier in classifiers.items():
-     ##   classifier.fit(X_train, Y_train)
-      ##  training_score = cross_val_score(classifier, X_train, Y_train, cv=5)
-       ## print("Classifiers: ", classifier.__class__.__name__, "Has a training score of", round(training_score.mean(), 2) * 100, "% accuracy score")
-
     ##LogisticRegression_model.fit(X_train, Y_train)
-    ##KNeighborsClassifier_model.fit(X_train, Y_train)
+    KNeighborsClassifier_model.fit(X_train, Y_train)
     DecisionTreeClassifier_model.fit(X_train, Y_train)
 
     
-    SaveAllModels(DecisionTreeClassifier_model)
-    ##return LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model
+    SaveAllModels(DecisionTreeClassifier_model,KNeighborsClassifier_model)
+    
     return
 
 
 def main():
-    GetServerData()
-    #df = CheckConnectionAndGetData()
-    #Train(df)
+    df =GetData()
+    Train(df)
     
     
-
-
 if __name__ == "__main__":
     main()
 
