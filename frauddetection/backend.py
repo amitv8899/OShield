@@ -48,5 +48,24 @@ def GetData(request):
             return HttpResponse('Unauthorized1', status=401)
     return HttpResponse('Unauthorized2', status=401)
     
-  
+
+
+def fraudResults(charges,bank_name,user):
+    df_charges = pd.read_excel('charges.xlsx')
+    data_user = {'id': [user.id],
+                'age': [user.age],
+                'live city': [user.cityLiveIn],
+                'gender': [user.gender] }
+    
+    df_user = pd.DataFrame(data_user)
+    
+    frames = [df_user, df_charges]
+    df_total = pd.concat(frames)
+
+    
+
+    # df_total_to amit prediction 
+
+    #after pred i need to add row yo sql
+
 
