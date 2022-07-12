@@ -2,7 +2,7 @@
 2. how to use job schedule with it 
 3. save the module in the server and use it 
 4.make data base for datacharge
-5.
+5. ok
 
 
 {
@@ -21,8 +21,6 @@
         }
     ]
 }
-
-
 
 import numpy as np
 import pandas as pd
@@ -48,14 +46,7 @@ from sklearn.model_selection import GridSearchCV
 #save models
 import pickle
 
-
-
-
-
 '''''
-
-
-
 #### help fun
 def number_to_time(number):
   number = number*24
