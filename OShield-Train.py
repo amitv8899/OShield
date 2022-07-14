@@ -1,3 +1,4 @@
+from cmath import e
 import numpy as np
 import pandas as pd
 import datetime
@@ -29,17 +30,13 @@ import urllib.request
 import base64
 import sqlite3
 
-
-
-
+#static vals:
 serverUrl ="http://127.0.0.1:8000/" 
-
 LocalDataPath = "C:\\Users\\AMIT\\Desktop\\studying\\workshop\\dataset\\my data\\data.xlsx"
-
 fileKNearest_model = 'KNearest_model.sav'
 fileDecisionTreeClassifier_model = 'DecisionTreeClassifier.sav'
 fileLogisticRegression_model = 'LogisticRegression.sav'
-db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\sql.db'
+db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\db.sqlit3'
 
 
 #### help fun
@@ -50,17 +47,16 @@ def GetLocalData():
 def GetData():
    conn = create_connection(db_file)
    cur = conn.cursor()
-   
    sql_query = pd.read_sql_query ('''SELECT * FROM frauddetection_data_charge''', conn)
-   df = pd.DataFrame(sql_query, columns = ['id_Username', 'age', 'cityLiveIn','Gender','amount','hour_of_debit','time_of_debit','city_of_debit','credit_card_showed','is_fraud'])
+   df = pd.DataFrame(sql_query, columns = ['id_User', 'age', 'cityLiveIn','gender','amount','hour_of_debit','time_of_debit','city_of_debit','credit_card_showed','is_fraud'])
    return df
    
 def create_connection(db_file):
-   conn = None
    try:
       conn = sqlite3.connect(db_file)
    except sqlite3.Error as e:
       print(e)
+      return None
 
    return conn
    
@@ -73,18 +69,28 @@ def number_to_time(number):
    toReturn = datetime.strptime(stringToConvert, "%H:%M").time()
    return toReturn
 
-def PrepareDF(df):
-   X = df.drop(['is faurd','currency'] ,axis=1)
-   Y = df['is faurd']
+def PrepareDF(df,is_train):
+   Y = None
+   if is_train:
+      ## split to x and y
+       X = df.drop(['is fraud'] ,axis=1)
+       Y = df['is faurd']
+
+   # replace F and M to 1 and 0
    dictGender = {
     'F':0,
-    'M':1
+    'M':1,
+    'f':0,
+    'm':1
     }
-
+    # replace am or pm to 1 and 0
    dictTime = {
     'AM':0,
-    'PM':1
+    'PM':1,
+    'am':0,
+    'pm':1
     }
+    # replace cities to number
    NumberOfCities = 1
    dictCities = {}
    CitiesArr = X[['live city','city of debit']].to_numpy()
@@ -122,9 +128,7 @@ def SaveAllModels(*argv):# known number of models - *args
         elif type(arg) is DecisionTreeClassifier:
             SaveModel(arg,fileDecisionTreeClassifier_model)
         elif type(arg) is LogisticRegression:
-            SaveModel(arg,fileDecisionTreeClassifier_model)
-            
-            
+            SaveModel(arg,fileDecisionTreeClassifier_model)        
 
 def SaveModel(model,fileName):
     pickle.dump(model,open(fileName,'wb'))
@@ -154,16 +158,54 @@ def Train(Tdata):## params = panada.df goal = to train model as in the colab
     return
 
 
+#delete
+def Prediction(KNearest_model,DecisionTreeClassifier_model,data):## input 2 models and data to predict -> uotput us a list of the rows that could be fraud
+    KNearest_model_P = KNearest_model.predict(data.to_numpy())
+    DecisionTreeClassifier_model_P = DecisionTreeClassifier_model.predict(data.to_numpy())
+    fruad = [l1+l2 for l1,l2 in zip(DecisionTreeClassifier_model_P,KNearest_model_P)]
+    return [i for i,val  in enumerate(fruad) if val > 1]
+ 
+def LoadModels():
+    try:
+       KNearest_model = pickle.load(open(fileKNearest_model, 'rb'))
+       DecisionTreeClassifier_model = pickle.load(open(fileDecisionTreeClassifier_model, 'rb'))
+       ##LogisticRegression_model = pickle.load(open(fileLogisticRegression_model, 'rb'))
+    except OSError as err:
+       print("OS error: {0}".format(err))
+       return None,None
+
+    return KNearest_model,DecisionTreeClassifier_model 
+   
 def main():
-    df =GetData()
-    Train(df)
+   #dataP = pd.read_excel("C:\\Users\\AMIT\\workpalce\\django-proj\\check.xlsx")
+
+   #df =GetData()
+   #df = GetLocalData()
+   #Train(df)
+   #KNearest_model,DecisionTreeClassifier_model = LoadModels()
+   #if KNearest_model != None or DecisionTreeClassifier_model != None:
+       #lst = Prediction(KNearest_model,DecisionTreeClassifier_model,dataP)
+       #print(lst)
+   data = {
+      "e" : [2,4,6],
+      "o": [1,3,5]
+   }
+   pd_d = pd.DataFrame(data)
+   
+   pd_d["e"] = pd_d.apply(lambda pd_d["e"]: )
+   print(pd_d["e"][1])
+   
+
+
+   
+         
+
+
+  
     
     
 if __name__ == "__main__":
     main()
-
-
-
 
 
 

@@ -56,15 +56,15 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=30,unique=True)
   
 
-    date_join = models.TimeField(verbose_name="date joined", auto_now_add= True)
+    date_join = models.DateField(verbose_name="date joined", auto_now_add= True)
     is_admin = models.BooleanField(default=False)
     #is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     
-    brith = models.DateField(verbose_name="brith",null= True)
+    birth = models.DateField(verbose_name="birth",null= True)
     age = models.IntegerField(verbose_name="age",null= True)
     cityLiveIn = models.CharField(verbose_name="city live in",max_length=30,null= True)
-    Sex = models.CharField(verbose_name="sex",max_length=1,null= True)
+    gender = models.CharField(verbose_name="gender",max_length=1,null= True,choices=["F","M"])
     
     objects = UserManager()
     
