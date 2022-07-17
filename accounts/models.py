@@ -64,7 +64,7 @@ class User(AbstractBaseUser):
     birth = models.DateField(verbose_name="birth",null= True)
     age = models.IntegerField(verbose_name="age",null= True)
     cityLiveIn = models.CharField(verbose_name="city live in",max_length=30,null= True)
-    gender = models.CharField(verbose_name="gender",max_length=1,null= True,choices=["F","M"])
+    gender = models.CharField(verbose_name="gender",max_length=1,null= True)
     
     objects = UserManager()
     
@@ -81,7 +81,7 @@ class User(AbstractBaseUser):
     
     def set_age(self):
         today = date.today()
-        self.age = today.year - self.brith.year - ((today.month, today.day) < (self.brith.month, self.brith.day))
+        self.age = today.year - self.birth.year - ((today.month, today.day) < (self.birth.month, self.birth.day))
         return
 
     @property

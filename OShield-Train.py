@@ -38,13 +38,16 @@ fileDecisionTreeClassifier_model = 'DecisionTreeClassifier.sav'
 fileLogisticRegression_model = 'LogisticRegression.sav'
 db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\db.sqlit3'
 
+cl = ["id","age","live city","gender","amount","hour of debit","time of debit","city of debit","credit card showed","is fraud"
+]
+
 
 #### help fun
 def GetLocalData():
    return pd.read_excel(LocalDataPath)
 
 
-def GetData():
+def GetData()-> pd.DataFrame:
    conn = create_connection(db_file)
    cur = conn.cursor()
    sql_query = pd.read_sql_query ('''SELECT * FROM frauddetection_data_charge''', conn)
@@ -59,15 +62,16 @@ def create_connection(db_file):
       return None
 
    return conn
+def time_to_number(time: datetime.time) -> int:
+   strh = time.strftime("%H")
+   strm = time.strftime("%M")
+   time_num = (int(strh)*100) + int(strm)
+
+   return time_num
+   
+   
    
 
-def number_to_time(number):
-   number = number*24
-   left = number - int(number)
-   left = (left)*60
-   stringToConvert = str(str(int(number))+':'+str(int(left)))
-   toReturn = datetime.strptime(stringToConvert, "%H:%M").time()
-   return toReturn
 
 def PrepareDF(df,is_train):
    Y = None
@@ -106,11 +110,9 @@ def PrepareDF(df,is_train):
 
    new_x = X.copy()
    new_x.replace({"gender":dictGender,"time of debit":dictTime,'live city':dictCities,'city of debit':dictCities},inplace=True)
+   new_x["hour_of_debit"] = new_x["hour_of_debit"].apply(time_to_number)
         
-
    return new_x,Y
-
-
 ## main fun
 def LogisticRegression_H():
    return LogisticRegression()
@@ -131,12 +133,16 @@ def SaveAllModels(*argv):# known number of models - *args
             SaveModel(arg,fileDecisionTreeClassifier_model)        
 
 def SaveModel(model,fileName):
-    pickle.dump(model,open(fileName,'wb'))
+   try:
+     pickle.dump(model,open(fileName,'wb'))
+   except OSError as err:
+      print("OS error: {0}".format(err))
+      
 
-def Train(Tdata):## params = panada.df goal = to train model as in the colab
+def Train(Tdata : pd.DataFrame):## params = panada.df goal = to train model as in the colab
     
 
-    X,Y = PrepareDF(Tdata)
+    X,Y = PrepareDF(Tdata,True)
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
     X_train = X_train.values
@@ -175,25 +181,16 @@ def LoadModels():
        return None,None
 
     return KNearest_model,DecisionTreeClassifier_model 
-   
-def main():
-   #dataP = pd.read_excel("C:\\Users\\AMIT\\workpalce\\django-proj\\check.xlsx")
 
-   #df =GetData()
-   #df = GetLocalData()
-   #Train(df)
-   #KNearest_model,DecisionTreeClassifier_model = LoadModels()
-   #if KNearest_model != None or DecisionTreeClassifier_model != None:
-       #lst = Prediction(KNearest_model,DecisionTreeClassifier_model,dataP)
-       #print(lst)
-   data = {
-      "e" : [2,4,6],
-      "o": [1,3,5]
-   }
-   pd_d = pd.DataFrame(data)
+
+def main():
+
+   df =GetData()
+   Train(df)
    
-   pd_d["e"] = pd_d.apply(lambda pd_d["e"]: )
-   print(pd_d["e"][1])
+   
+
+   
    
 
 
