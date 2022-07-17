@@ -95,6 +95,13 @@ def PrepareDF(df,is_train):
         
    return new_x,Y
 
+def time_to_number(time: datetime.time) -> int:
+   strh = time.strftime("%H")
+   strm = time.strftime("%M")
+   time_num = (int(strh)*100) + int(strm)
+
+   return time_num
+
 def Prediction(data : pd.DataFrame) -> list[int]:## input 2 models and data to predict -> uotput us a list of the rows that could be fraud
     X,Y = PrepareDF(data,False)
     KNearest_model,DecisionTreeClassifier_model = LoadModels()
