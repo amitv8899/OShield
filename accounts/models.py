@@ -54,13 +54,10 @@ class User(AbstractBaseUser):
 
     email = models.EmailField(verbose_name="email", max_length=50)
     username = models.CharField(max_length=30,unique=True)
-  
-
     date_join = models.DateField(verbose_name="date joined", auto_now_add= True)
     is_admin = models.BooleanField(default=False)
     #is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    
     birth = models.DateField(verbose_name="birth",null= True)
     age = models.IntegerField(verbose_name="age",null= True)
     cityLiveIn = models.CharField(verbose_name="city live in",max_length=30,null= True)

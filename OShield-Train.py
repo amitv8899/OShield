@@ -69,8 +69,6 @@ def time_to_number(time: datetime.time) -> int:
 
    return time_num
    
-   
-   
 
 
 def PrepareDF(df,is_train):
@@ -185,9 +183,14 @@ def LoadModels():
 
 def main():
 
-   df =GetData()
+   df = GetData()
    Train(df)
-   
+   data = pd.read_excel("C:/Users/AMIT/Desktop/studying/workshop/dataset/check.xlsx")
+   x,y = PrepareDF(data,True)
+   KNearest_model,DecisionTreeClassifier_model = LoadModels()
+   print(Prediction(KNearest_model,DecisionTreeClassifier_model,x))
+   print(y)
+
    
 
    
