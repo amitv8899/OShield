@@ -92,7 +92,7 @@ def PrepareDF(df,is_train):
     'am':0,
     'pm':1
     }
-    # replace cities to number
+    # replace cities to number -> should be replace from the table in the data base
    NumberOfCities = 1
    dictCities = {}
    CitiesArr = X[['live city','city of debit']].to_numpy()
