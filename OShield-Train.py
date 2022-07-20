@@ -1,3 +1,4 @@
+from cmath import e
 import numpy as np
 import pandas as pd
 import datetime
@@ -27,59 +28,71 @@ import pickle
 import requests
 import urllib.request
 import base64
+import sqlite3
 
-
-
+#static vals:
 serverUrl ="http://127.0.0.1:8000/" 
-
 LocalDataPath = "C:\\Users\\AMIT\\Desktop\\studying\\workshop\\dataset\\my data\\data.xlsx"
-
 fileKNearest_model = 'KNearest_model.sav'
 fileDecisionTreeClassifier_model = 'DecisionTreeClassifier.sav'
 fileLogisticRegression_model = 'LogisticRegression.sav'
+db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\db.sqlit3'
+
+cl = ["id","age","live city","gender","amount","hour of debit","time of debit","city of debit","credit card showed","is fraud"
+]
 
 
 #### help fun
 def GetLocalData():
    return pd.read_excel(LocalDataPath)
 
-def GetServerData(): # need to change
-   DataUrl = serverUrl + "Data/"
-   password = "model123456789"
-   request = requests.get(DataUrl,params={"password": password})
-   data = request.content
-   #data = pickle.loads(base64.b64decode(data.encode()))
-   print(data)
+
+def GetData()-> pd.DataFrame:
+   conn = create_connection(db_file)
+   cur = conn.cursor()
+   sql_query = pd.read_sql_query ('''SELECT * FROM frauddetection_data_charge''', conn)
+   df = pd.DataFrame(sql_query, columns = ['id_User', 'age', 'cityLiveIn','gender','amount','hour_of_debit','time_of_debit','city_of_debit','credit_card_showed','is_fraud'])
+   return df
    
-   return data
+def create_connection(db_file):
+   try:
+      conn = sqlite3.connect(db_file)
+   except sqlite3.Error as e:
+      print(e)
+      return None
 
-def CheckConnectionAndGetData():
-   if(requests.get(serverUrl).status_code == 200):
-      return GetServerData()
-        
-   else:
-      return GetLocalData()
+   return conn
+def time_to_number(time: datetime.time) -> int:
+   strh = time.strftime("%H")
+   strm = time.strftime("%M")
+   time_num = (int(strh)*100) + int(strm)
 
-def number_to_time(number):
-   number = number*24
-   left = number - int(number)
-   left = (left)*60
-   stringToConvert = str(str(int(number))+':'+str(int(left)))
-   toReturn = datetime.strptime(stringToConvert, "%H:%M").time()
-   return toReturn
+   return time_num
+   
 
-def PrepareDF(df):
-   X = df.drop(['is faurd','currency'] ,axis=1)
-   Y = df['is faurd']
+
+def PrepareDF(df,is_train):
+   Y = None
+   if is_train:
+      ## split to x and y
+       X = df.drop(['is fraud'] ,axis=1)
+       Y = df['is faurd']
+
+   # replace F and M to 1 and 0
    dictGender = {
     'F':0,
-    'M':1
+    'M':1,
+    'f':0,
+    'm':1
     }
-
+    # replace am or pm to 1 and 0
    dictTime = {
     'AM':0,
-    'PM':1
+    'PM':1,
+    'am':0,
+    'pm':1
     }
+    # replace cities to number -> should be replace from the table in the data base
    NumberOfCities = 1
    dictCities = {}
    CitiesArr = X[['live city','city of debit']].to_numpy()
@@ -95,11 +108,9 @@ def PrepareDF(df):
 
    new_x = X.copy()
    new_x.replace({"gender":dictGender,"time of debit":dictTime,'live city':dictCities,'city of debit':dictCities},inplace=True)
+   new_x["hour_of_debit"] = new_x["hour_of_debit"].apply(time_to_number)
         
-
    return new_x,Y
-
-
 ## main fun
 def LogisticRegression_H():
    return LogisticRegression()
@@ -117,17 +128,19 @@ def SaveAllModels(*argv):# known number of models - *args
         elif type(arg) is DecisionTreeClassifier:
             SaveModel(arg,fileDecisionTreeClassifier_model)
         elif type(arg) is LogisticRegression:
-            SaveModel(arg,fileDecisionTreeClassifier_model)
-            
-            
+            SaveModel(arg,fileDecisionTreeClassifier_model)        
 
 def SaveModel(model,fileName):
-    pickle.dump(model,open(fileName,'wb'))
+   try:
+     pickle.dump(model,open(fileName,'wb'))
+   except OSError as err:
+      print("OS error: {0}".format(err))
+      
 
-def Train(Tdata):## params = panada.df goal = to train model as in the colab
+def Train(Tdata : pd.DataFrame):## params = panada.df goal = to train model as in the colab
     
 
-    X,Y = PrepareDF(Tdata)
+    X,Y = PrepareDF(Tdata,True)
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
     X_train = X_train.values
@@ -139,40 +152,51 @@ def Train(Tdata):## params = panada.df goal = to train model as in the colab
     KNeighborsClassifier_model = KNeighborsClassifier_H()
     DecisionTreeClassifier_model = DecisionTreeClassifier_H()
 
-    ##classifiers = {
-    ##"LogisiticRegression": LogisticRegression_model,
-    ##"KNearest": KNeighborsClassifier_model,
-    ##"DecisionTreeClassifier": DecisionTreeClassifier_model
-     ##}
-
-    ##for key, classifier in classifiers.items():
-     ##   classifier.fit(X_train, Y_train)
-      ##  training_score = cross_val_score(classifier, X_train, Y_train, cv=5)
-       ## print("Classifiers: ", classifier.__class__.__name__, "Has a training score of", round(training_score.mean(), 2) * 100, "% accuracy score")
-
     ##LogisticRegression_model.fit(X_train, Y_train)
-    ##KNeighborsClassifier_model.fit(X_train, Y_train)
+    KNeighborsClassifier_model.fit(X_train, Y_train)
     DecisionTreeClassifier_model.fit(X_train, Y_train)
 
     
-    SaveAllModels(DecisionTreeClassifier_model)
-    ##return LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model
+    SaveAllModels(DecisionTreeClassifier_model,KNeighborsClassifier_model)
+    
     return
 
 
+#delete
+def Prediction(KNearest_model,DecisionTreeClassifier_model,data):## input 2 models and data to predict -> uotput us a list of the rows that could be fraud
+    KNearest_model_P = KNearest_model.predict(data.to_numpy())
+    DecisionTreeClassifier_model_P = DecisionTreeClassifier_model.predict(data.to_numpy())
+    fruad = [l1+l2 for l1,l2 in zip(DecisionTreeClassifier_model_P,KNearest_model_P)]
+    return [i for i,val  in enumerate(fruad) if val > 1]
+ 
+def LoadModels():
+    try:
+       KNearest_model = pickle.load(open(fileKNearest_model, 'rb'))
+       DecisionTreeClassifier_model = pickle.load(open(fileDecisionTreeClassifier_model, 'rb'))
+       ##LogisticRegression_model = pickle.load(open(fileLogisticRegression_model, 'rb'))
+    except OSError as err:
+       print("OS error: {0}".format(err))
+       return None,None
+
+    return KNearest_model,DecisionTreeClassifier_model 
+
+
 def main():
-    GetServerData()
-    #df = CheckConnectionAndGetData()
-    #Train(df)
+
+   df = GetData()
+   Train(df)
+   data = pd.read_excel("C:/Users/AMIT/Desktop/studying/workshop/dataset/check.xlsx")
+   x,y = PrepareDF(data,True)
+   KNearest_model,DecisionTreeClassifier_model = LoadModels()
+   print(Prediction(KNearest_model,DecisionTreeClassifier_model,x))
+   print(y)
+
+   
+  
     
     
-
-
 if __name__ == "__main__":
     main()
-
-
-
 
 
 
