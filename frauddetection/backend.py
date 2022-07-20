@@ -113,14 +113,14 @@ def LoadModels():
     return KNearest_model,DecisionTreeClassifier_model
     
 
-def FraudResuilt(User,dataframe):
+def FraudResuilt(User,chargeToPredict):
    # מוסיף את העיר של משתמש לטבלה של city in data אם לא קיים שם 
    #add all citiies in data frame to cityindata 
    # merge User and dataframe to new dataframe
    # send dataframe to Prediction
    # list <- Prediction (list conatian all the indexes in the new data frame that could be fraud)
-   # return list of list[list[]] 
-   # like return = [["ramat gan",12/4/2024,12:34,222],["tel aviv",13/6/2018,17:12,30404]] format = city,hour,
+   #save to db
+   # return new_dataframe,list
 
 
 
