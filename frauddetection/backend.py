@@ -60,13 +60,8 @@ def IsCityInData(city):
    return cur.fetchone()
    
 
-def PrepareDF(df,is_train):
+def PrepareDF(df):
    Y = None
-   if is_train:
-      ## split to x and y
-       X = df.drop(['is fraud'] ,axis=1)
-       Y = df['is faurd']
-
    # replace F and M to 1 and 0
    dictGender = {
     'F':0,
@@ -81,7 +76,7 @@ def PrepareDF(df,is_train):
     'am':0,
     'pm':1
     }
-    # replace cities to number
+    # replace cities to number -> need to make it dict!!!
    dictCities = (models.CityInData.objects.values('id','nameOfCity'))
    
 
@@ -123,15 +118,9 @@ def FraudResuilt(User,dataframe):
    #add all citiies in data frame to cityindata 
    # merge User and dataframe to new dataframe
    # send dataframe to Prediction
-   # list 
-
-   City = models.CityInData.objects.get(nameOfCity = User.cityLiveIn)
-   id_City = City.id
-   username = User.name
-   gender = User.gender
-
-
-
+   # list <- Prediction (list conatian all the indexes in the new data frame that could be fraud)
+   # return list of list[list[]] 
+   # like return = [["ramat gan",12/4/2024,12:34,222],["tel aviv",13/6/2018,17:12,30404]] format = city,hour,
 
 
 

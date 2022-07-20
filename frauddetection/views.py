@@ -11,7 +11,7 @@ def check_form_view(request):
          if request.method == "POST":
             upload_file = request.FILES['charge']
             df = pd.read_excel(upload_file)
-            FraudResuilt(request.user,df)
+            allFraud = FraudResuilt(request.user,df)
             
     
 

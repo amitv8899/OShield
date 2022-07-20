@@ -93,21 +93,9 @@ def PrepareDF(df,is_train):
     'pm':1
     }
     # replace cities to number -> should be replace from the table in the data base
-   NumberOfCities = 1
-   dictCities = {}
-   CitiesArr = X[['live city','city of debit']].to_numpy()
-
-   for Lc,Dc in CitiesArr :
-       if Lc not in dictCities:
-          dictCities[Lc] = NumberOfCities
-          NumberOfCities = NumberOfCities + 1
-       if Dc not in dictCities:
-          dictCities[Dc] = NumberOfCities
-          NumberOfCities = NumberOfCities + 1
-    
-
+   
    new_x = X.copy()
-   new_x.replace({"gender":dictGender,"time of debit":dictTime,'live city':dictCities,'city of debit':dictCities},inplace=True)
+   new_x.replace({"gender":dictGender,"time of debit":dictTime},inplace=True)
    new_x["hour_of_debit"] = new_x["hour_of_debit"].apply(time_to_number)
         
    return new_x,Y
