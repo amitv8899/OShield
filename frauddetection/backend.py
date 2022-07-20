@@ -122,4 +122,5 @@ def LoadModels():
     return KNearest_model,DecisionTreeClassifier_model
     
 
-
+def FraudResuilt(User,dataframe):
+   pass
