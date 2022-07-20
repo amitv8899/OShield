@@ -50,12 +50,22 @@ def GetData(request):
     
 
 
-def fraudResults(charges,bank_name,user):
-    df_charges = pd.read_excel('charges.xlsx')
+def fraudResults(df_charges,user):
     data_user = {'id': [user.id],
                 'age': [user.age],
                 'live city': [user.cityLiveIn],
                 'gender': [user.gender] }
+
+
+    # לבדוק אם העיר קיימת בסכמה של סיטי אין דאטה
+    # שומר תסכמה
+    curr_city = city_in_data(data_user['live city'])
+    curr_city.save()
+
+    #לקחת מהסכמה את הזהות הייחודיות של העיר
+    
+    charge 
+
     
     df_user = pd.DataFrame(data_user)
     
@@ -63,6 +73,9 @@ def fraudResults(charges,bank_name,user):
     df_total = pd.concat(frames)
 
     
+    prediction(df_total)
+
+
 
     # df_total_to amit prediction 
 
