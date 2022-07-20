@@ -33,26 +33,32 @@ from .models import Data_charge
 import base64
 from django.http import HttpResponse
 
+import sqlite3
+from . import models
+
+
 fileKNearest_model = 'KNearest_model.sav'
 fileDecisionTreeClassifier_model = 'DecisionTreeClassifier.sav'
 fileLogisticRegression_model = 'LogisticRegression.sav'
 
-def GetData(request):
+db_file = 'C:\\Users\\AMIT\\workpalce\\django-proj\\db.sqlit3'
 
-    if request.method == "GET":
-        if request.GET["password"] == "model123456789":
-            df =  pd.DataFrame(list(Data_charge.objects.all().values()))
-            print(df)
-            dataPickled = pickle.dumps(df)
-            data_b64 =  base64.b64encode(dataPickled)
-            print(data_b64)
-            DatatoSend = data_b64.decode('utf-8')
-            print(DatatoSend)
-        
-            return  HttpResponse(DatatoSend, status=200)
-        else:
-            return HttpResponse('Unauthorized1', status=401)
-    return HttpResponse('Unauthorized2', status=401)
+
+def create_connection(db_file):
+   try:
+      conn = sqlite3.connect(db_file)
+   except sqlite3.Error as e:
+      print(e)
+      return None
+
+   return conn
+
+def IsCityInData(city):
+   conn = create_connection(db_file)
+   cur = conn.cursor()
+   cur.execute('''SELECT nameOfCity FROM frauddetection_CityInData WHERE nameOfCity=?''',(city))
+   return cur.fetchone()
+   
 
 def PrepareDF(df,is_train):
    Y = None
@@ -76,18 +82,8 @@ def PrepareDF(df,is_train):
     'pm':1
     }
     # replace cities to number
-   NumberOfCities = 1
-   dictCities = {}
-   CitiesArr = X[['live city','city of debit']].to_numpy()
-
-   for Lc,Dc in CitiesArr :
-       if Lc not in dictCities:
-          dictCities[Lc] = NumberOfCities
-          NumberOfCities = NumberOfCities + 1
-       if Dc not in dictCities:
-          dictCities[Dc] = NumberOfCities
-          NumberOfCities = NumberOfCities + 1
-    
+   dictCities = (models.CityInData.objects.values('id','nameOfCity'))
+   
 
    new_x = X.copy()
    new_x.replace({"gender":dictGender,"time of debit":dictTime,'live city':dictCities,'city of debit':dictCities},inplace=True)
@@ -123,4 +119,21 @@ def LoadModels():
     
 
 def FraudResuilt(User,dataframe):
+   # מוסיף את העיר של משתמש לטבלה של city in data אם לא קיים שם 
+   #add all citiies in data frame to cityindata 
+   # merge User and dataframe to new dataframe
+   # send dataframe to Prediction
+   # list 
+
+   City = models.CityInData.objects.get(nameOfCity = User.cityLiveIn)
+   id_City = City.id
+   username = User.name
+   gender = User.gender
+
+
+
+
+
+
    pass
+   

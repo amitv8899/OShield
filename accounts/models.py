@@ -11,14 +11,14 @@ class UserManager(BaseUserManager):
             raise ValueError("must have username")
         if not_admin:
             if not birth:
-               raise ValueError("must have brith") 
+               raise ValueError("must have brith")
             else:
                today = date.today()
                ageUser = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
             if not city:
                raise ValueError("must have city")
             if not gender:
-               raise ValueError("must have sex")
+               raise ValueError("must have gender")
        
         user = self.model(
             username = username,
