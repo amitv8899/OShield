@@ -1,4 +1,4 @@
-1. move all fun to outside and understand how to send param to it or connect to server and ask data frame maybe with http request (check brith of useers before train)
+1. move all fun to outside and understand how to send param to it or connect to server and ask data frame maybe with http request (check birth of useers before train)
 2. how to use job schedule with it 
 3. save the module in the server and use it 
 4.make data base for datacharge
