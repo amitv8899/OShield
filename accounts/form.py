@@ -5,13 +5,13 @@ from .models import User
 
 class RegisterForm(UserCreationForm):
 	
-    brith = forms.DateField(required=True)
+    birth = forms.DateField(required=True)
     email = forms.EmailField(required=True)
     cityLiveIn = forms.CharField(required=True)
-    Sex = forms.CharField(required=True)
+    gender = forms.CharField(required=True)
     class Meta:
         model = User
-        fields = ("username","email","brith","cityLiveIn","Sex","password1","password2")
+        fields = ("username","email","birth","cityLiveIn","gender","password1","password2")
 
     def save(self,commit = True):
         user = super(RegisterForm,self).save(commit = False)

@@ -23,5 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("accounts/",include("accounts.urls")),
     path("home/",views.home,name="home"),
+<<<<<<< HEAD
     path("Data/",backend.GetData),
+=======
+    path("frauddetection/",include("frauddetection.urls")) 
+>>>>>>> amit_work
 ]
