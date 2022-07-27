@@ -114,14 +114,7 @@ def LoadModels():
     
 
 def FraudResuilt(User,chargeToPredict):
-   # מוסיף את העיר של משתמש לטבלה של city in data אם לא קיים שם 
-   #add all citiies in data frame to cityindata 
-   # merge User and dataframe to new dataframe
-   # send dataframe to Prediction
-   # list <- Prediction (list conatian all the indexes in the new data frame that could be fraud)
-   #save to db
-   # return new_dataframe,list
-
+  
 
 
    pass
