@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+  <title>{% block title %}OShield{% endblock %}</title>
+                   
+    <head>
+        <div id = navbar class="navbar">
+         <img class = "logo_toolbar" src="{% static 'assets/Logo.png'%}" >  
+         {% block navbar %} 
+          
+         {% endblock %}
+        </div>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+  <body>
+    {% csrf_token %}
+    <div id="content", name="content">
+    {% block content %}
+    base
+    {% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>{% block title %}OShield{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+        <div id = header class="header">  
+            {% block header %}
+            {% endblock %}
+        </div>
+       
+</head>
+<body>
+    {% csrf_token %}
+    <div class = "poster">
+    <img src="{% static 'assets/poster.png'%}" width="450" height="520">
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends 'accounts/base.html' %}
+<html> 
+	
+	<title>{% block title %}OShield{% endblock %}</title>
+	<head>
+		<div id = navbar class="navbar">
+			{% block navbar %}
+			 <button name="logout", type="button", class="btn btn-success logout_toolbar" onclick="location.href='/accounts/logout'" >logout</button> 
+			{% endblock %}
+		</div>
+    </head>
+	<body>
+		{% block content %}
+		
+			<legend class="subject">hello {{Cusername}}</legend>
+		
+			<legend class="border-bottom mb-3 text">for upload</legend>	
+			<button name="upload", type="button", class="btn btn-success"onclick="location.href='/frauddetection/uploadCharges'">upload charge</button>
+
+		
+	    {% endblock %}
+	</body>
+
+</html>

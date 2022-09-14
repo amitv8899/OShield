@@ -1,0 +1,25 @@
+{% extends 'frauddetection/base.html' %}
+<html>  
+  <head>
+		<title>{% block titlte %}OShield{% endblock %}</title>
+    
+	</head>
+  <body>
+    {% block content %}
+   <legend class="subject">Upload</legend>
+   <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+      <input class="input_file" type="file" name="charge">
+    
+    
+      <button type="submit">Upload file</button>
+    
+
+    
+    </form>
+  {% endblock %}
+    
+  </body>
+
+</html>

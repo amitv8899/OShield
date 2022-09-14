@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>{% block title %}OShield{% endblock %}</title>
+        <div class="navbar">
+            <img class = "logo_toolbar" src="{% static 'assets/Logo.png'%}">
+            <button name="logout", type="button", class="btn btn-success logout_toolbar"onclick="location.href='/accounts/logout'" >logout</button>
+        </div>
+      
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+</head>
+
+<body>
+    {% csrf_token %}
+    <div id="content", name="content">
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>

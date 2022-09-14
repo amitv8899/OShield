@@ -1,0 +1,284 @@
+1. upldate the data and the check data 
+2. how to use job schedule with train.py
+3. build option to upluad all the data for train -> train models -> check if works in predict 
+4.
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
+
+import numpy as np
+import pandas as pd
+import datetime
+
+#fix data
+from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Classifier Libraries / train
+from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+import collections
+from sklearn.model_selection import cross_val_score
+#extra train
+from sklearn.model_selection import GridSearchCV
+'''''
+#save models
+import pickle
+
+'''''
+#### help fun
+def number_to_time(number):
+  number = number*24
+  left = number - int(number)
+  left = (left)*60
+  stringToConvert = str(str(int(number))+':'+str(int(left)))
+  toReturn = datetime.strptime(stringToConvert, "%H:%M").time()
+  return toReturn
+###
+def read_dataFrameLocal(path):
+
+    df = pd.read_excel(path)
+    return df
+####
+
+
+## main fun
+def LogisticRegression_H():
+    return LogisticRegression()
+
+def KNeighborsClassifier_H():
+    return KNeighborsClassifier()
+
+def DecisionTreeClassifier_H():
+    return DecisionTreeClassifier()
+
+
+def Train(Tdata):## params = panada.df goal = to train model as in the colab
+    if Tdata is not pd.df:  
+        return 
+
+    X = Tdata.drop(['is faurd','currency'] ,axis=1)
+    Y = Tdata['is faurd']
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+    X_train = X_train.values
+    X_test = X_test.values
+    Y_train = Y_train.values
+    Y_test = Y_test.values
+
+    LogisticRegression_model =  LogisticRegression_H()
+    KNeighborsClassifier_model = KNeighborsClassifier_H()
+    DecisionTreeClassifier_model = DecisionTreeClassifier_H()
+
+    LogisticRegression_model.fit(X_train, Y_train)
+    KNeighborsClassifier_model.fit(X_train, Y_train)
+    DecisionTreeClassifier_model.fit(X_train, Y_train)
+
+    SaveModel(LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model)
+    return LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model
+
+
+
+def SaveModel(model1,model2,model3):# params =  3 sklearn models, goal save them with pickle, right know on the disk
+    pass
+
+
+def FraudDerection():## need to prepare data before perdiction!
+    dfPrediocatin = read_dataFrameLocal("C:\Users\AMIT\workpalce\django-proj\check.xlsx")
+    dfTrain =read_dataFrameLocal("C:\Users\AMIT\workpalce\django-proj\data.xlsx") 
+    
+    LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model = Train(dfTrain)
+
+    if not AllIndexFruad:
+         print("fraud not detected!")
+    else:
+       infoOfFraud = dfPrediocatin[['amount','hour of debit','city of debit']]
+       for i in AllIndexFruad:
+           row = infoOfFraud.loc[ i , : ]
+           print("fraud detect: the amount is:", row['amount'] ,'the hour of charge is at :',timeMaker(row['hour of debit']),
+             " the city of charge is :", row['city of debit'])
+'''''
+    
+
+////////////////////////
+backend 
+#
+import numpy as np
+import pandas as pd
+import datetime
+
+from urllib3 import HTTPResponse
+
+#get data
+from . import models
+
+#fix data
+from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Classifier Libraries / train
+from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+import collections
+from sklearn.model_selection import cross_val_score
+#extra train
+from sklearn.model_selection import GridSearchCV
+
+#save models
+import pickle
+## django 
+from . import models
+
+from django.http import HttpResponse
+
+def GetData(request):
+   return HttpResponse(request)
+
+  
+
+
+
+
+#### help fun
+def number_to_time(number):
+  number = number*24
+  left = number - int(number)
+  left = (left)*60
+  stringToConvert = str(str(int(number))+':'+str(int(left)))
+  toReturn = datetime.strptime(stringToConvert, "%H:%M").time()
+  return toReturn
+###
+def read_dataFrameLocal(path):
+
+    df = pd.read_excel(path)
+    return df
+####
+
+
+## main fun
+def LogisticRegression_H():
+    return LogisticRegression()
+
+def KNeighborsClassifier_H():
+    return KNeighborsClassifier()
+
+def DecisionTreeClassifier_H():
+    return DecisionTreeClassifier()
+
+
+def Train(Tdata):## params = panada.df goal = to train model as in the colab
+    if Tdata is not pd.df:  
+        return 
+
+    X = Tdata.drop(['is faurd','currency'] ,axis=1)
+    Y = Tdata['is faurd']
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+    X_train = X_train.values
+    X_test = X_test.values
+    Y_train = Y_train.values
+    Y_test = Y_test.values
+
+    LogisticRegression_model =  LogisticRegression_H()
+    KNeighborsClassifier_model = KNeighborsClassifier_H()
+    DecisionTreeClassifier_model = DecisionTreeClassifier_H()
+
+    LogisticRegression_model.fit(X_train, Y_train)
+    KNeighborsClassifier_model.fit(X_train, Y_train)
+    DecisionTreeClassifier_model.fit(X_train, Y_train)
+
+    SaveModel(LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model)
+    return LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model
+
+
+def Prediction(Pdata, log_reg,grid_knears ,grid_tree):# params = panda.df goal = to predict the fraud
+    
+    log_reg_predict = log_reg.predict(Pdata.to_numpy())
+    grid_knears_predict = grid_knears.predict(Pdata.to_numpy())
+    grid_tree_predict = grid_tree.predict(Pdata.to_numpy())
+    index = 0
+    AllIndexFruad= []
+
+    for l,gk,gr in zip(log_reg_predict,grid_knears_predict,grid_tree_predict):
+        sum = l+gk+gr
+        if sum > 1 :
+            AllIndexFruad.append(index)
+        index = index + 1
+     
+    return AllIndexFruad
+
+
+def GetData():# goal get psanda.df from models.Data_charge(sqlite) return the df
+    queryset = models.Data_charge.objects.values_list("id_Username","age","C","D")### to complete
+    df = pd.DataFrame(list(queryset), columns=["A","B","C","D"]) 
+    return df
+    
+
+def SaveModel(model1,model2,model3):# params =  3 sklearn models, goal save them with pickle, right know on the disk
+    pass
+
+def loadModel():
+    return False
+
+
+def FraudDerection():## need to prepare data before perdiction!
+    dfPrediocatin = read_dataFrameLocal("C:\Users\AMIT\workpalce\django-proj\check.xlsx")
+    dfTrain =read_dataFrameLocal("C:\Users\AMIT\workpalce\django-proj\data.xlsx") 
+    
+    LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model = Train(dfTrain)
+    AllIndexFruad = Prediction(dfPrediocatin,LogisticRegression_model,KNeighborsClassifier_model,DecisionTreeClassifier_model)
+
+    if not AllIndexFruad:
+         print("fraud not detected!")
+    else:
+       infoOfFraud = dfPrediocatin[['amount','hour of debit','city of debit']]
+       for i in AllIndexFruad:
+           row = infoOfFraud.loc[ i , : ]
+          # print("fraud detect: the amount is:", row['amount'] ,'the hour of charge is at :',timeMaker(row['hour of debit']),
+           
+           #  " the city of charge is :", row['city of debit'])
+
+
+    
+
+
+
+fraudlist = [0,3]
+df 
+listm = []
+listodindexindb = []
+
+mess = "hello my name is + the age is + "
+
+for index in fraudlist:
+     name = (df[index])[name]
+     age = (df[index])[age]
+     mess.insert(name, age) 
+     listm.apennd(curM)
+
+
+istm = [["hello my name is amit the age is 26 "][]"hello my name is omer the age is 2 "]
+"hello my name is amit the age is 26 " [chaeck box]

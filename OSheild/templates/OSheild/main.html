@@ -1,0 +1,34 @@
+{% extends 'OSheild/base.html' %}
+{% load static %} 
+
+<html>
+  <title>{% block titlte %}UserHome{% endblock %}</title>
+  <head>
+   
+   
+      {% block header %}  
+      <h1 class ="main_subject">Welcome to OShield</h1>
+      {% endblock %}
+   
+    
+  </head>
+  
+    <body >
+      
+      {% block content %}
+      
+	    <div class="main_container">
+        <img class ="logo_main" src="{% static 'assets/Logo.png'%}" width="200" height="200">
+        <div>
+        <button name="login", type="button", class="buttom_main"onclick="location.href='/accounts/login'">Login</button>
+        </div>
+        <div>
+        <button name="register", type="button", class="buttom_main"onclick="location.href='/accounts/register'">Register</button>
+        <a class = "main_about" href="OShield/aboutUs">About OShield</a>
+        </div>
+        
+	    </div>	
+      {% endblock %}
+    </body>
+
+</html>>

@@ -1,0 +1,29 @@
+{% extends 'frauddetection/base.html' %}
+<html> 
+    <head>
+		<title>{% block titlte %}{% endblock %}</title>
+    
+	</head>
+   
+    <body>
+    {% block content %}
+      <form method="POST" enctype="multipart/form-data">
+      <legend class="subject">Verify</legend>
+      <h3>please mark any charge that you did not do!</h3>
+      {% csrf_token %}
+    <div class = "msg_container">
+      <ul style="list-style: none;">
+      {% for messege in messegeArray %}
+     <li class="text msg"><input  type="checkbox" name="checks[]" value="{{ messege.0}}"> {{ messege.1}}</li>
+      {% endfor %}
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    
+      </ul>
+    </div>
+      </form>
+      {% endblock %}
+    </body>
+
+</html>

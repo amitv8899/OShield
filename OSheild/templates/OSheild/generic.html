@@ -1,0 +1,18 @@
+{% extends 'OSheild/base.html' %}
+{% load static %} 
+
+
+<html>
+    <head>
+        <div id = navbar class="navbar">
+            {% block header %}
+			<img src="{% static 'assets/Logo.png'%}" width="140" height="140">
+            {% endblock %}
+		</div>
+    </head>
+    <body>
+    {% block content %}
+    <div><h>{{Msg_to_user}}</h></div>
+    {% endblock %}
+    </body>
+</html>

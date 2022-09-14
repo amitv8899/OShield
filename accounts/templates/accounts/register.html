@@ -1,0 +1,29 @@
+{% extends 'accounts/base.html' %}
+<head>
+<title>{% block titlte %}Register{% endblock %}</title>
+</head>
+{% block content %}
+	<div class="content-section">
+		<form method="POST">
+		  <div class = "form_accounts">
+			<legend class="subject">Create an Account</legend>
+			{% csrf_token %}
+		    {% for field in form %}
+		      <div class="input-container">
+			  <div>
+				<label class="input_label" for="{{ field.auto_id }}">{{ field.label }}</label>
+		      </div>
+			  <div>
+			   {{ field }}
+			  </div>
+			  </div>
+            {% endfor %}
+			
+			
+			<div>
+			<button name="create", type="submit", class="btn btn-success">Register</button>
+			</div>
+		 </div>
+		</form>
+	</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>{% block title %}OShield{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+        <div id = header class="header">  
+            {% block header %}
+            {% endblock %}
+        </div>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    {% csrf_token %}
+    <div id="content", name="content">
+    {% block content %}
+    base
+    {% endblock %}
+    </div>
+</body>
+</html>
